@@ -1,0 +1,84 @@
+@namespace RootNamespace.Modules.ModuleName
+@inherits ModuleBase
+@inject IModuleNameService ModuleNameService
+@inject NavigationManager NavigationManager
+
+@if (_moduleNames == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <ActionLink Action="Add" Text="Add ModuleName" />
+
+    @if (_moduleNames.Count == 0)
+    {
+        <p>No items found.</p>
+    }
+    else
+    {
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Created</th>
+                    <th>&nbsp;</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in _moduleNames)
+                {
+                    <tr>
+                        <td>@item.ModuleNameId</td>
+                        <td>@item.CreatedOn.ToShortDateString()</td>
+                        <td>
+                            <ActionLink Action="Detail" Parameters="@($"id={item.ModuleNameId}")" Text="View" />
+                            &nbsp;
+                            <ActionLink Action="Edit" Parameters="@($"id={item.ModuleNameId}")" Text="Edit" />
+                            &nbsp;
+                            <ActionDialog Header="Delete ModuleName"
+                                          Message="@($"Are you sure you want to delete this item?")"
+                                          Action="Delete"
+                                          Security="SecurityAccessLevel.Edit"
+                                          Class="btn btn-danger"
+                                          OnClick="@(async () => await DeleteModuleName(item.ModuleNameId))"
+                                          ResourceKey="DeleteModuleName" />
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}
+
+@code {
+    private List<RootNamespace.Models.ModuleName> _moduleNames;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _moduleNames = await ModuleNameService.GetModuleNamesAsync(ModuleId);
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(ex, "Error loading ModuleName list");
+            AddModuleMessage("Error loading items. Please try again.", MessageType.Error);
+        }
+    }
+
+    private async Task DeleteModuleName(int id)
+    {
+        try
+        {
+            await ModuleNameService.DeleteModuleNameAsync(id);
+            await logger.LogInformation("ModuleName {ModuleNameId} deleted", id);
+            _moduleNames = await ModuleNameService.GetModuleNamesAsync(ModuleId);
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(ex, "Error deleting ModuleName {ModuleNameId}", id);
+            AddModuleMessage("Error deleting item. Please try again.", MessageType.Error);
+        }
+    }
+}

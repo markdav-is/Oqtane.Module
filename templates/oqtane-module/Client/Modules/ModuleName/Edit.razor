@@ -1,0 +1,60 @@
+@namespace RootNamespace.Modules.ModuleName
+@inherits ModuleBase
+@inject IModuleNameService ModuleNameService
+@inject NavigationManager NavigationManager
+
+@if (_item == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <div class="container">
+        <div class="row mb-1 align-items-center">
+            <Label Class="col-sm-3" For="placeholder" HelpText="Enter a value" ResourceKey="Placeholder">Value:</Label>
+            <div class="col-sm-9">
+                <input id="placeholder" class="form-control" @bind="_placeholder" />
+            </div>
+        </div>
+    </div>
+
+    <button type="button" class="btn btn-success" @onclick="SaveModuleName">Save</button>
+    <NavLink class="btn btn-secondary" href="@NavigateUrl()">Cancel</NavLink>
+}
+
+@code {
+    private RootNamespace.Models.ModuleName _item;
+    private string _placeholder;
+
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _item = await ModuleNameService.GetModuleNameAsync(Id);
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(ex, "Error loading ModuleName {ModuleNameId}", Id);
+            AddModuleMessage("Error loading item. Please try again.", MessageType.Error);
+        }
+    }
+
+    private async Task SaveModuleName()
+    {
+        try
+        {
+            await ModuleNameService.UpdateModuleNameAsync(_item);
+            await logger.LogInformation("ModuleName {ModuleNameId} updated", _item.ModuleNameId);
+            NavigationManager.NavigateTo(NavigateUrl());
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(ex, "Error updating ModuleName {ModuleNameId}", _item.ModuleNameId);
+            AddModuleMessage("Error saving item. Please try again.", MessageType.Error);
+        }
+    }
+}
