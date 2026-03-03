@@ -1,19 +1,15 @@
-using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Oqtane.Models;
 
 namespace RootNamespace.Models
 {
     [Table("RootNamespaceModuleName")]
-    public class ModuleName
+    public class ModuleName : ModelBase
     {
         [Key]
         public int ModuleNameId { get; set; }
         public int ModuleId { get; set; }
-        public string CreatedBy { get; set; }
-        public DateTime CreatedOn { get; set; }
-        public string ModifiedBy { get; set; }
-        public DateTime ModifiedOn { get; set; }
-        public bool IsDeleted { get; set; }
+        public string Name { get; set; }
     }
 }

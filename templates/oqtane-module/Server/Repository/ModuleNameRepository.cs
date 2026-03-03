@@ -1,89 +1,74 @@
-using Microsoft.EntityFrameworkCore;
-using Oqtane.Infrastructure;
-using RootNamespace.Models;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Oqtane.Modules;
+using RootNamespace.Models;
 
 namespace RootNamespace.Repository
 {
     public interface IModuleNameRepository
     {
-        Task<List<ModuleName>> GetModuleNamesAsync(int moduleId);
-        Task<ModuleName> GetModuleNameAsync(int moduleNameId);
-        Task<ModuleName> AddModuleNameAsync(ModuleName moduleName);
-        Task<ModuleName> UpdateModuleNameAsync(ModuleName moduleName);
-        Task DeleteModuleNameAsync(int moduleNameId);
+        IEnumerable<ModuleName> GetModuleNames(int moduleId);
+        ModuleName GetModuleName(int moduleNameId);
+        ModuleName GetModuleName(int moduleNameId, int moduleId);
+        ModuleName AddModuleName(ModuleName moduleName);
+        ModuleName UpdateModuleName(ModuleName moduleName);
+        void DeleteModuleName(int moduleNameId);
     }
 
-    public class ModuleNameRepository : IModuleNameRepository
+    public class ModuleNameRepository : IModuleNameRepository, ITransientService
     {
-        private readonly IDbContextFactory<TenantDBContext> _dbContextFactory;
+        private readonly IDbContextFactory<ModuleNameContext> _factory;
 
-        public ModuleNameRepository(IDbContextFactory<TenantDBContext> dbContextFactory)
+        public ModuleNameRepository(IDbContextFactory<ModuleNameContext> factory)
         {
-            _dbContextFactory = dbContextFactory;
+            _factory = factory;
         }
 
-        public async Task<List<ModuleName>> GetModuleNamesAsync(int moduleId)
+        public IEnumerable<ModuleName> GetModuleNames(int moduleId)
         {
-            using var db = _dbContextFactory.CreateDbContext();
-            return await db.Set<ModuleName>()
-                .Where(m => m.ModuleId == moduleId && !m.IsDeleted)
-                .ToListAsync();
+            using var db = _factory.CreateDbContext();
+            return db.ModuleName.Where(item => item.ModuleId == moduleId).ToList();
         }
 
-        public async Task<ModuleName> GetModuleNameAsync(int moduleNameId)
+        public ModuleName GetModuleName(int moduleNameId)
         {
-            using var db = _dbContextFactory.CreateDbContext();
-            return await db.Set<ModuleName>()
-                .FirstOrDefaultAsync(m => m.ModuleNameId == moduleNameId && !m.IsDeleted);
+            return GetModuleName(moduleNameId, -1);
         }
 
-        public async Task<ModuleName> AddModuleNameAsync(ModuleName moduleName)
+        public ModuleName GetModuleName(int moduleNameId, int moduleId)
         {
-            using var db = _dbContextFactory.CreateDbContext();
-            db.Set<ModuleName>().Add(moduleName);
-            await db.SaveChangesAsync();
+            using var db = _factory.CreateDbContext();
+            var query = db.ModuleName.Where(item => item.ModuleNameId == moduleNameId);
+            if (moduleId != -1)
+            {
+                query = query.Where(item => item.ModuleId == moduleId);
+            }
+            return query.FirstOrDefault();
+        }
+
+        public ModuleName AddModuleName(ModuleName moduleName)
+        {
+            using var db = _factory.CreateDbContext();
+            db.ModuleName.Add(moduleName);
+            db.SaveChanges();
             return moduleName;
         }
 
-        public async Task<ModuleName> UpdateModuleNameAsync(ModuleName moduleName)
+        public ModuleName UpdateModuleName(ModuleName moduleName)
         {
-            using var db = _dbContextFactory.CreateDbContext();
-
-            // Load the existing entity to avoid blindly overwriting all fields on a detached instance
-            var existing = await db.Set<ModuleName>()
-                .FirstOrDefaultAsync(m => m.ModuleNameId == moduleName.ModuleNameId && !m.IsDeleted);
-
-            if (existing == null)
-            {
-                // No matching, non-deleted record found; let caller handle this case
-                return null;
-            }
-
-            // Preserve soft-delete status to avoid unintentionally changing it
-            var originalIsDeleted = existing.IsDeleted;
-
-            // Update the tracked entity with values from the incoming entity
-            db.Entry(existing).CurrentValues.SetValues(moduleName);
-
-            // Restore the original soft-delete flag
-            existing.IsDeleted = originalIsDeleted;
-
-            await db.SaveChangesAsync();
-            return existing;
+            using var db = _factory.CreateDbContext();
+            db.ModuleName.Update(moduleName);
+            db.SaveChanges();
+            return moduleName;
         }
 
-        public async Task DeleteModuleNameAsync(int moduleNameId)
+        public void DeleteModuleName(int moduleNameId)
         {
-            using var db = _dbContextFactory.CreateDbContext();
-            var moduleName = await db.Set<ModuleName>().FindAsync(moduleNameId);
-            if (moduleName != null)
-            {
-                moduleName.IsDeleted = true;
-                await db.SaveChangesAsync();
-            }
+            using var db = _factory.CreateDbContext();
+            var moduleName = db.ModuleName.Find(moduleNameId);
+            db.ModuleName.Remove(moduleName);
+            db.SaveChanges();
         }
     }
 }

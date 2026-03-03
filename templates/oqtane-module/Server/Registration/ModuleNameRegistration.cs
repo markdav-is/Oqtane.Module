@@ -1,9 +1,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Oqtane.Infrastructure;
-using RootNamespace.Managers;
 using RootNamespace.Repository;
-using RootNamespace.Services;
 
 namespace RootNamespace
 {
@@ -11,7 +9,6 @@ namespace RootNamespace
     {
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddTransient<IModuleNameService, ModuleNameManager>();
             services.AddTransient<IModuleNameRepository, ModuleNameRepository>();
         }
 
