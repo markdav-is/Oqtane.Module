@@ -18,20 +18,5 @@
       "defaultValue": "MyCompany.MyApp",
       "description": "Root namespace for the module (e.g. MarkDav.WeatherArbitrage)"
     },
-    "RootNamespaceNoDots": {
-      "type": "generated",
-      "generator": "regex",
-      "datatype": "string",
-      "parameters": {
-        "source": "namespace",
-        "steps": [
-          {
-            "regex": "\\.",
-            "replacement": ""
-          }
-        ]
-      },
-      "replaces": "RootNamespaceNoDots"
-    }
   }
 }
