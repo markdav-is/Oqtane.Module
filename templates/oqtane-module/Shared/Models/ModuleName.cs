@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace RootNamespace.Models
 {
-    [Table("RootNamespaceNoDotsModuleName")]
+    [Table("RootNamespaceNoDots")]
     public class ModuleName
     {
         [Key]
