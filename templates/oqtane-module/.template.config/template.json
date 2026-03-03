@@ -17,6 +17,6 @@
       "replaces": "RootNamespace",
       "defaultValue": "MyCompany.MyApp",
       "description": "Root namespace for the module (e.g. MarkDav.WeatherArbitrage)"
-    },
+    }
   }
 }
