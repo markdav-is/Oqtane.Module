@@ -24,7 +24,8 @@
         {
             var item = new RootNamespace.Models.ModuleName
             {
-                ModuleId = ModuleId
+                ModuleId = ModuleId,
+                Placeholder = _placeholder
             };
 
             item = await ModuleNameService.AddModuleNameAsync(item);
