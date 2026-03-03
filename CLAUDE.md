@@ -37,7 +37,7 @@ Update this list as phases complete.
 - Always use `@namespace RootNamespace.Modules.ModuleName` in Razor files
 - Always register services via `IServerStartup` — never touch `Program.cs`
 - Soft delete only — set `IsDeleted = true`, never hard delete
-- Table naming convention: `RootNamespaceModuleName` (no dots, no separators)
+- Table naming convention: `RootNamespaceModuleName` — dots preserved from namespace, no separator between namespace and module name (e.g. `MyCompany.MyProjectTestModule`)
 - Token `ModuleName` substitutes in both file contents and file/folder names
 - Token `RootNamespace` substitutes in file contents only
 
