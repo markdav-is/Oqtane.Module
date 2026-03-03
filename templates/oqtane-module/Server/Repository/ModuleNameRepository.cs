@@ -51,9 +51,28 @@ namespace RootNamespace.Repository
         public async Task<ModuleName> UpdateModuleNameAsync(ModuleName moduleName)
         {
             using var db = _dbContextFactory.CreateDbContext();
-            db.Entry(moduleName).State = EntityState.Modified;
+
+            // Load the existing entity to avoid blindly overwriting all fields on a detached instance
+            var existing = await db.Set<ModuleName>()
+                .FirstOrDefaultAsync(m => m.ModuleNameId == moduleName.ModuleNameId && !m.IsDeleted);
+
+            if (existing == null)
+            {
+                // No matching, non-deleted record found; let caller handle this case
+                return null;
+            }
+
+            // Preserve soft-delete status to avoid unintentionally changing it
+            var originalIsDeleted = existing.IsDeleted;
+
+            // Update the tracked entity with values from the incoming entity
+            db.Entry(existing).CurrentValues.SetValues(moduleName);
+
+            // Restore the original soft-delete flag
+            existing.IsDeleted = originalIsDeleted;
+
             await db.SaveChangesAsync();
-            return moduleName;
+            return existing;
         }
 
         public async Task DeleteModuleNameAsync(int moduleNameId)
