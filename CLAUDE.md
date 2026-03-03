@@ -19,7 +19,7 @@ Full implementation spec is in `COPILOT_PROMPT.md`.
 ## Implementation Phases
 
 - [x] **Phase 1** — `template.json` + token substitution verification
-- [ ] **Phase 2** — Shared: `ModuleName.cs`, `IModuleNameService.cs`
+- [x] **Phase 2** — Shared: `ModuleName.cs`, `IModuleNameService.cs`
 - [ ] **Phase 3** — Server: `ModuleNameRepository.cs`, `ModuleNameManager.cs`, `ModuleNameController.cs`
 - [ ] **Phase 4** — Server: `ModuleNameRegistration.cs`
 - [ ] **Phase 5** — Client: `Index.razor`, `Edit.razor`, `Add.razor`, `Detail.razor`
