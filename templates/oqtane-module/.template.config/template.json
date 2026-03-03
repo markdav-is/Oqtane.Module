@@ -1,0 +1,37 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "MarkDav",
+  "classifications": ["Oqtane", "Blazor", "Module"],
+  "identity": "MarkDav.Oqtane.Module.Template",
+  "name": "Oqtane Module",
+  "shortName": "oqtane-module",
+  "sourceName": "ModuleName",
+  "tags": {
+    "language": "C#",
+    "type": "item"
+  },
+  "symbols": {
+    "namespace": {
+      "type": "parameter",
+      "datatype": "string",
+      "replaces": "RootNamespace",
+      "defaultValue": "MyCompany.MyApp",
+      "description": "Root namespace for the module (e.g. MarkDav.WeatherArbitrage)"
+    },
+    "RootNamespaceNoDots": {
+      "type": "generated",
+      "generator": "regex",
+      "datatype": "string",
+      "parameters": {
+        "source": "namespace",
+        "steps": [
+          {
+            "regex": "\\.",
+            "replacement": ""
+          }
+        ]
+      },
+      "replaces": "RootNamespaceNoDots"
+    }
+  }
+}
