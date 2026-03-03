@@ -95,8 +95,11 @@ fi
 
 echo ""
 echo "=== Step 7: dotnet build ==="
-dotnet build
-BUILD_EXIT=$?
+if dotnet build; then
+    BUILD_EXIT=0
+else
+    BUILD_EXIT=$?
+fi
 
 echo ""
 echo "=== Results ==="
