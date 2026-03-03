@@ -1,0 +1,41 @@
+@namespace RootNamespace.Modules.ModuleName
+@inherits ModuleBase
+@inject IModuleNameService ModuleNameService
+@inject NavigationManager NavigationManager
+
+<div class="container">
+    <div class="row mb-1 align-items-center">
+        <Label Class="col-sm-3" For="placeholder" HelpText="Enter a value" ResourceKey="Placeholder">Value:</Label>
+        <div class="col-sm-9">
+            <input id="placeholder" class="form-control" @bind="_placeholder" />
+        </div>
+    </div>
+</div>
+
+<button type="button" class="btn btn-success" @onclick="SaveModuleName">Save</button>
+<NavLink class="btn btn-secondary" href="@NavigateUrl()">Cancel</NavLink>
+
+@code {
+    private string _placeholder;
+
+    private async Task SaveModuleName()
+    {
+        try
+        {
+            var item = new RootNamespace.Models.ModuleName
+            {
+                ModuleId = ModuleId,
+                Placeholder = _placeholder
+            };
+
+            item = await ModuleNameService.AddModuleNameAsync(item);
+            await logger.LogInformation("ModuleName {ModuleNameId} added", item.ModuleNameId);
+            NavigationManager.NavigateTo(NavigateUrl());
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(ex, "Error adding ModuleName");
+            AddModuleMessage("Error adding item. Please try again.", MessageType.Error);
+        }
+    }
+}
