@@ -21,7 +21,7 @@ Full implementation spec is in `COPILOT_PROMPT.md`.
 - [x] **Phase 1** — `template.json` + token substitution verification
 - [x] **Phase 2** — Shared: `ModuleName.cs`, `IModuleNameService.cs`
 - [x] **Phase 3** — Server: `ModuleNameRepository.cs`, `ModuleNameManager.cs`, `ModuleNameController.cs`
-- [ ] **Phase 4** — Server: `ModuleNameRegistration.cs`
+- [x] **Phase 4** — Server: `ModuleNameRegistration.cs`
 - [ ] **Phase 5** — Client: `Index.razor`, `Edit.razor`, `Add.razor`, `Detail.razor`
 - [ ] **Phase 6** — NuGet packaging (`MarkDav.Oqtane.Module.Template.csproj`)
 - [ ] **Phase 7** — End-to-end test: scaffold into real Oqtane.Application solution, confirm build
