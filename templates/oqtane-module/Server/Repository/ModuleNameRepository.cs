@@ -42,6 +42,7 @@ namespace RootNamespace.Repository
 
         public async Task<ModuleName> AddModuleNameAsync(ModuleName moduleName)
         {
+            moduleName.IsDeleted = false;
             using var db = _dbContextFactory.CreateDbContext();
             db.Set<ModuleName>().Add(moduleName);
             await db.SaveChangesAsync();
