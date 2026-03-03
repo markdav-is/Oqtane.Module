@@ -23,8 +23,9 @@ if [ -z "${PACKAGE_ID:-}" ] || [ -z "${PACKAGE_VERSION:-}" ]; then
 fi
 PACKAGE_FILE="bin/Release/${PACKAGE_ID}.${PACKAGE_VERSION}.nupkg"
 
-MODULE_NAME="WeatherArbitrage"
-ROOT_NAMESPACE="MarkDav.WeatherArbitrage"
+MODULE_SUFFIX="$(date +%s)"
+MODULE_NAME="WeatherArbitrage${MODULE_SUFFIX}"
+ROOT_NAMESPACE="MarkDav.WeatherArbitrage${MODULE_SUFFIX}"
 
 # Path to an existing Oqtane.Application solution root (override with env var)
 OQTANE_SOLUTION_DIR="${OQTANE_SOLUTION_DIR:-/tmp/OqtaneApp}"
