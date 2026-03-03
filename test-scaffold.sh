@@ -5,8 +5,22 @@
 
 set -euo pipefail
 
-PACKAGE_VERSION="1.0.0"
-PACKAGE_ID="MarkDav.Oqtane.Module.Template"
+# Allow overriding package metadata via environment; otherwise derive from the .csproj
+: "${CSPROJ_FILE:=$(ls *.csproj 2>/dev/null | head -n 1)}"
+if [ ! -f "$CSPROJ_FILE" ]; then
+    echo "ERROR: Could not find .csproj file in the current directory."
+    echo "Set CSPROJ_FILE, PACKAGE_ID, and PACKAGE_VERSION environment variables as needed."
+    exit 1
+fi
+
+: "${PACKAGE_ID:=$(grep -m1 '<PackageId>' "$CSPROJ_FILE" | sed -E 's/.*<PackageId>(.+)<\/PackageId>.*/\1/')}"
+: "${PACKAGE_VERSION:=$(grep -m1 '<PackageVersion>' "$CSPROJ_FILE" | sed -E 's/.*<PackageVersion>(.+)<\/PackageVersion>.*/\1/')}"
+
+if [ -z "${PACKAGE_ID:-}" ] || [ -z "${PACKAGE_VERSION:-}" ]; then
+    echo "ERROR: Failed to determine PACKAGE_ID or PACKAGE_VERSION."
+    echo "You can set PACKAGE_ID and PACKAGE_VERSION as environment variables to override detection."
+    exit 1
+fi
 PACKAGE_FILE="bin/Release/${PACKAGE_ID}.${PACKAGE_VERSION}.nupkg"
 
 MODULE_NAME="WeatherArbitrage"
