@@ -21,6 +21,7 @@ else
             <thead>
                 <tr>
                     <th>Id</th>
+                    <th>Name</th>
                     <th>Created</th>
                     <th>&nbsp;</th>
                 </tr>
@@ -30,6 +31,7 @@ else
                 {
                     <tr>
                         <td>@item.ModuleNameId</td>
+                        <td>@item.Name</td>
                         <td>@item.CreatedOn.ToShortDateString()</td>
                         <td>
                             <ActionLink Action="Detail" Parameters="@($"id={item.ModuleNameId}")" Text="View" />

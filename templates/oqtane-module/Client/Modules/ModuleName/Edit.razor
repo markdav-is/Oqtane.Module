@@ -11,9 +11,9 @@ else
 {
     <div class="container">
         <div class="row mb-1 align-items-center">
-            <Label Class="col-sm-3" For="placeholder" HelpText="Enter a value" ResourceKey="Placeholder">Value:</Label>
+            <Label Class="col-sm-3" For="name" HelpText="Enter a value" ResourceKey="Name">Name:</Label>
             <div class="col-sm-9">
-                <input id="placeholder" class="form-control" @bind="_placeholder" />
+                <input id="name" class="form-control" @bind="_item.Name" />
             </div>
         </div>
     </div>
@@ -24,7 +24,6 @@ else
 
 @code {
     private RootNamespace.Models.ModuleName _item;
-    private string _placeholder;
 
     [Parameter]
     [SupplyParameterFromQuery]
