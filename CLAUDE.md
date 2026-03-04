@@ -21,7 +21,7 @@ Full implementation spec is in `COPILOT_PROMPT.md`.
 - [x] **Phase 1** — `template.json` + token substitution verification
 - [x] **Phase 2** — Shared: `ModuleName.cs`, `IModuleNameService.cs`
 - [x] **Phase 3** — Server: `ModuleNameRepository.cs`, `ModuleNameManager.cs`, `ModuleNameController.cs`
-- [x] **Phase 4** — Server: `ModuleNameRegistration.cs`
+- [x] **Phase 4** — Server: auto-registration via `ITransientService` (no `ModuleNameRegistration.cs`)
 - [x] **Phase 5** — Client: `Index.razor`, `Edit.razor`, `Add.razor`, `Detail.razor`
 - [x] **Phase 6** — NuGet packaging (`MarkDav.Oqtane.Module.Template.csproj`)
 - [x] **Phase 7** — End-to-end test: scaffold into real Oqtane.Application solution, confirm build
@@ -36,7 +36,7 @@ Update this list as phases complete.
 - `ModuleNameContext` inherits `DBContextBase` and implements `IMultiDatabase` — auto-registered by Oqtane, not manually in `IServerStartup`
 - Always inherit `ModuleBase` in Razor components
 - Always use `@namespace RootNamespace.Modules.ModuleName` in Razor files
-- Register `IModuleNameRepository` via `IServerStartup` — never touch `Program.cs`
+- `IModuleNameRepository` is auto-registered by Oqtane because `ModuleNameRepository` implements `ITransientService` — no `IServerStartup` needed, never touch `Program.cs`
 - Hard delete (row removal) matches official Oqtane pattern; `ModelBase` provides `IsDeleted` for audit purposes only
 - Table naming convention: `RootNamespaceModuleName` — dots preserved from namespace, no separator (e.g. `MyCompany.MyProjectTestModule`)
 - Token `ModuleName` substitutes in both file contents and file/folder names
@@ -71,7 +71,6 @@ templates/
     Server/Controllers/
     Server/Managers/
     Server/Repository/
-    Server/Registration/
 MarkDav.Oqtane.Module.Template.csproj
 CLAUDE.md
 COPILOT_PROMPT.md
