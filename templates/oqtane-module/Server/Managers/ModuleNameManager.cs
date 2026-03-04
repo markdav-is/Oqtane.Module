@@ -1,43 +1,89 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.Json;
+using System.Threading.Tasks;
+using Oqtane.Enums;
+using Oqtane.Infrastructure;
+using Oqtane.Interfaces;
+using Oqtane.Models;
+using Oqtane.Modules;
+using Oqtane.Repository;
 using RootNamespace.Models;
 using RootNamespace.Repository;
-using RootNamespace.Services;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace RootNamespace.Managers
 {
-    public class ModuleNameManager : IModuleNameService
+    public class ModuleNameManager : MigratableModuleBase, IInstallable, IPortable, ISearchable
     {
         private readonly IModuleNameRepository _moduleNameRepository;
+        private readonly IDBContextDependencies _DBContextDependencies;
 
-        public ModuleNameManager(IModuleNameRepository moduleNameRepository)
+        public ModuleNameManager(IModuleNameRepository moduleNameRepository, IDBContextDependencies DBContextDependencies)
         {
             _moduleNameRepository = moduleNameRepository;
+            _DBContextDependencies = DBContextDependencies;
         }
 
-        public async Task<List<ModuleName>> GetModuleNamesAsync(int moduleId)
+        public bool Install(Tenant tenant, string version)
         {
-            return await _moduleNameRepository.GetModuleNamesAsync(moduleId);
+            return Migrate(new ModuleNameContext(_DBContextDependencies), tenant, MigrationType.Up);
         }
 
-        public async Task<ModuleName> GetModuleNameAsync(int moduleNameId)
+        public bool Uninstall(Tenant tenant)
         {
-            return await _moduleNameRepository.GetModuleNameAsync(moduleNameId);
+            return Migrate(new ModuleNameContext(_DBContextDependencies), tenant, MigrationType.Down);
         }
 
-        public async Task<ModuleName> AddModuleNameAsync(ModuleName moduleName)
+        public string ExportModule(Oqtane.Models.Module module)
         {
-            return await _moduleNameRepository.AddModuleNameAsync(moduleName);
+            string content = "";
+            var items = _moduleNameRepository.GetModuleNames(module.ModuleId).ToList();
+            if (items.Any())
+            {
+                content = JsonSerializer.Serialize(items);
+            }
+            return content;
         }
 
-        public async Task<ModuleName> UpdateModuleNameAsync(ModuleName moduleName)
+        public void ImportModule(Oqtane.Models.Module module, string content, string version)
         {
-            return await _moduleNameRepository.UpdateModuleNameAsync(moduleName);
+            if (!string.IsNullOrEmpty(content))
+            {
+                var items = JsonSerializer.Deserialize<List<ModuleName>>(content);
+                if (items != null)
+                {
+                    foreach (var item in items)
+                    {
+                        _moduleNameRepository.AddModuleName(new ModuleName
+                        {
+                            ModuleId = module.ModuleId,
+                            Name = item.Name
+                        });
+                    }
+                }
+            }
         }
 
-        public async Task DeleteModuleNameAsync(int moduleNameId)
+        public Task<List<SearchContent>> GetSearchContentsAsync(PageModule pageModule, DateTime lastIndexedOn)
         {
-            await _moduleNameRepository.DeleteModuleNameAsync(moduleNameId);
+            var searchContents = new List<SearchContent>();
+            foreach (var item in _moduleNameRepository.GetModuleNames(pageModule.ModuleId))
+            {
+                if (item.ModifiedOn >= lastIndexedOn)
+                {
+                    searchContents.Add(new SearchContent
+                    {
+                        EntityName = "RootNamespaceModuleName",
+                        EntityId = item.ModuleNameId.ToString(),
+                        Title = item.Name,
+                        Body = item.Name,
+                        ContentModifiedBy = item.ModifiedBy,
+                        ContentModifiedOn = item.ModifiedOn
+                    });
+                }
+            }
+            return Task.FromResult(searchContents);
         }
     }
 }

@@ -32,14 +32,20 @@ Update this list as phases complete.
 
 ## Hard Rules
 
-- Always use `IDbContextFactory<TenantDBContext>` — never inject `DbContext` directly
+- Always use `IDbContextFactory<ModuleNameContext>` (dedicated per-module context) — never `TenantDBContext`, never inject `DbContext` directly
+- `ModuleNameContext` inherits `DBContextBase` and implements `IMultiDatabase` — auto-registered by Oqtane, not manually in `IServerStartup`
 - Always inherit `ModuleBase` in Razor components
 - Always use `@namespace RootNamespace.Modules.ModuleName` in Razor files
-- Always register services via `IServerStartup` — never touch `Program.cs`
-- Soft delete only — set `IsDeleted = true`, never hard delete
-- Table naming convention: `RootNamespaceModuleName` — dots preserved from namespace, no separator between namespace and module name (e.g. `MyCompany.MyProjectTestModule`)
+- Register `IModuleNameRepository` via `IServerStartup` — never touch `Program.cs`
+- Hard delete (row removal) matches official Oqtane pattern; `ModelBase` provides `IsDeleted` for audit purposes only
+- Table naming convention: `RootNamespaceModuleName` — dots preserved from namespace, no separator (e.g. `MyCompany.MyProjectTestModule`)
 - Token `ModuleName` substitutes in both file contents and file/folder names
 - Token `RootNamespace` substitutes in file contents only
+- Manager inherits `MigratableModuleBase`, implements `IInstallable`, `IPortable`, `ISearchable` — runs EF migrations on install
+- Controller inherits `ModuleControllerBase`; use `IsAuthorizedEntityId()` — no `[Authorize]` policy attributes
+- Add and Edit share a single `Edit.razor` using `PageState.Action` — no separate `Add.razor`
+- `ModuleInfo.cs` implements `IModule` — required for Oqtane module discovery
+- Client HTTP service (`ModuleNameService`) inherits `ServiceBase`, implements `ITransientService` — no manual client DI registration needed
 
 ---
 

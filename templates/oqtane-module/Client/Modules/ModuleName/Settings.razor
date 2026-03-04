@@ -1,0 +1,48 @@
+@using RootNamespace.Services
+
+@namespace RootNamespace.Modules.ModuleName
+@inherits ModuleBase
+@inject ISettingService SettingService
+@inject IStringLocalizer<Settings> Localizer
+
+<div class="container">
+    <div class="row mb-1 align-items-center">
+        <Label Class="col-sm-3" For="setting" ResourceKey="Setting">Setting: </Label>
+        <div class="col-sm-9">
+            <input id="setting" class="form-control" @bind="@_setting" />
+        </div>
+    </div>
+</div>
+
+@code {
+    public override string Title => "ModuleName Settings";
+
+    private string _setting = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _setting = SettingService.GetSetting(ModuleState.Settings, "Setting", "");
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(ex, "Error Loading ModuleName Settings {Error}", ex.Message);
+            AddModuleMessage(Localizer["Message.LoadError"], MessageType.Error);
+        }
+    }
+
+    public override async Task UpdateSettings()
+    {
+        try
+        {
+            await SettingService.UpdateSettingAsync(EntityNames.Module, ModuleState.ModuleId, "Setting", _setting);
+            await logger.LogInformation("ModuleName Settings Updated");
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(ex, "Error Updating ModuleName Settings {Error}", ex.Message);
+            AddModuleMessage(Localizer["Message.UpdateError"], MessageType.Error);
+        }
+    }
+}
