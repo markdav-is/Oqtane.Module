@@ -23,7 +23,8 @@
     {
         try
         {
-            _setting = SettingService.GetSetting(ModuleState.Settings, "Setting", "");
+            var settings = await SettingService.GetModuleSettingsAsync(ModuleState.ModuleId);
+            _setting = SettingService.GetSetting(settings, "Setting", "");
         }
         catch (Exception ex)
         {
@@ -32,11 +33,13 @@
         }
     }
 
-    public override async Task UpdateSettings()
+    public async Task UpdateSettings()
     {
         try
         {
-            await SettingService.UpdateSettingAsync(EntityNames.Module, ModuleState.ModuleId, "Setting", _setting);
+            var settings = await SettingService.GetModuleSettingsAsync(ModuleState.ModuleId);
+            settings = SettingService.SetSetting(settings, "Setting", _setting);
+            await SettingService.UpdateModuleSettingsAsync(settings, ModuleState.ModuleId);
             await logger.LogInformation("ModuleName Settings Updated");
         }
         catch (Exception ex)
