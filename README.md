@@ -56,17 +56,17 @@ Server/
     MyModuleManager.cs    # Inherits MigratableModuleBase; runs EF migrations on install
   Repository/
     MyModuleContext.cs    # DbContext (DBContextBase + IMultiDatabase)
-    MyModuleRepository.cs
+    MyModuleRepository.cs # ITransientService — auto-registered by Oqtane
   Migrations/
     20240101000000_MyModuleInitialCreate.cs
     MyModuleContextModelSnapshot.cs
-  Registration/
-    MyModuleRegistration.cs
 ```
 
 ## Design Approach
 
 This template follows the same internal manifest conventions used by `Oqtane.Application`, ensuring compatibility with Oqtane's module loading and registration system. It is intentionally scoped to file scaffolding only — module registration in the Oqtane UI remains a one-time manual step per module.
+
+Services are registered automatically — no `IServerStartup` class is generated. Oqtane scans assemblies for types implementing `ITransientService` and registers them along with their interfaces, so no manual DI wiring is required.
 
 ## Related
 
