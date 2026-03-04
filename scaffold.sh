@@ -19,9 +19,9 @@ if [[ -z "$CSPROJ" ]]; then
 fi
 
 # Extract RootNamespace (fall back to AssemblyName)
-NAMESPACE=$(grep -oP '(?<=<RootNamespace>)[^<]+' "$CSPROJ" | head -1 || true)
+NAMESPACE=$(sed -n 's:.*<RootNamespace>\([^<]*\)</RootNamespace>.*:\1:p' "$CSPROJ" | head -1 || true)
 if [[ -z "$NAMESPACE" ]]; then
-  NAMESPACE=$(grep -oP '(?<=<AssemblyName>)[^<]+' "$CSPROJ" | head -1 || true)
+  NAMESPACE=$(sed -n 's:.*<AssemblyName>\([^<]*\)</AssemblyName>.*:\1:p' "$CSPROJ" | head -1 || true)
 fi
 
 if [[ -z "$NAMESPACE" ]]; then
