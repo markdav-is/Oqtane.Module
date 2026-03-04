@@ -52,6 +52,8 @@ Shared/
 Server/
   Controllers/
     MyModuleController.cs
+  Services/
+    MyModuleService.cs    # Server-side IMyModuleService implementation (ITransientService)
   Managers/
     MyModuleManager.cs    # Inherits MigratableModuleBase; runs EF migrations on install
   Repository/

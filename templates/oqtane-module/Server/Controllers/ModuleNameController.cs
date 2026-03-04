@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Oqtane.Controllers;
@@ -6,7 +7,7 @@ using Oqtane.Enums;
 using Oqtane.Infrastructure;
 using Oqtane.Shared;
 using RootNamespace.Models;
-using RootNamespace.Repository;
+using RootNamespace.Services;
 
 namespace RootNamespace.Controllers
 {
@@ -14,20 +15,20 @@ namespace RootNamespace.Controllers
     [ApiController]
     public class ModuleNameController : ModuleControllerBase
     {
-        private readonly IModuleNameRepository _moduleNameRepository;
+        private readonly IModuleNameService _moduleNameService;
 
-        public ModuleNameController(IModuleNameRepository moduleNameRepository, ILogManager logger, IHttpContextAccessor accessor) : base(logger, accessor)
+        public ModuleNameController(IModuleNameService moduleNameService, ILogManager logger, IHttpContextAccessor accessor) : base(logger, accessor)
         {
-            _moduleNameRepository = moduleNameRepository;
+            _moduleNameService = moduleNameService;
         }
 
         // GET api/<controller>?moduleid=x
         [HttpGet]
-        public IEnumerable<ModuleName> Get(int moduleId)
+        public async Task<IEnumerable<ModuleName>> Get(int moduleId)
         {
             if (IsAuthorizedEntityId(EntityNames.Module, moduleId))
             {
-                return _moduleNameRepository.GetModuleNames(moduleId);
+                return await _moduleNameService.GetModuleNamesAsync(moduleId);
             }
             else
             {
@@ -39,11 +40,11 @@ namespace RootNamespace.Controllers
 
         // GET api/<controller>/5/1
         [HttpGet("{id}/{moduleId}")]
-        public ModuleName Get(int id, int moduleId)
+        public async Task<ModuleName> Get(int id, int moduleId)
         {
             if (IsAuthorizedEntityId(EntityNames.Module, moduleId))
             {
-                return _moduleNameRepository.GetModuleName(id, moduleId);
+                return await _moduleNameService.GetModuleNameAsync(id, moduleId);
             }
             else
             {
@@ -55,11 +56,11 @@ namespace RootNamespace.Controllers
 
         // POST api/<controller>
         [HttpPost]
-        public ModuleName Post([FromBody] ModuleName moduleName)
+        public async Task<ModuleName> Post([FromBody] ModuleName moduleName)
         {
             if (ModelState.IsValid && IsAuthorizedEntityId(EntityNames.Module, moduleName.ModuleId))
             {
-                moduleName = _moduleNameRepository.AddModuleName(moduleName);
+                moduleName = await _moduleNameService.AddModuleNameAsync(moduleName);
                 _logger.Log(LogLevel.Information, this, LogFunction.Create, "ModuleName Added {ModuleName}", moduleName);
                 return moduleName;
             }
@@ -73,11 +74,11 @@ namespace RootNamespace.Controllers
 
         // PUT api/<controller>/5
         [HttpPut("{id}")]
-        public ModuleName Put(int id, [FromBody] ModuleName moduleName)
+        public async Task<ModuleName> Put(int id, [FromBody] ModuleName moduleName)
         {
             if (ModelState.IsValid && IsAuthorizedEntityId(EntityNames.Module, moduleName.ModuleId) && id == moduleName.ModuleNameId)
             {
-                moduleName = _moduleNameRepository.UpdateModuleName(moduleName);
+                moduleName = await _moduleNameService.UpdateModuleNameAsync(moduleName);
                 _logger.Log(LogLevel.Information, this, LogFunction.Update, "ModuleName Updated {ModuleName}", moduleName);
                 return moduleName;
             }
@@ -91,11 +92,11 @@ namespace RootNamespace.Controllers
 
         // DELETE api/<controller>/5/1
         [HttpDelete("{id}/{moduleId}")]
-        public void Delete(int id, int moduleId)
+        public async Task Delete(int id, int moduleId)
         {
             if (IsAuthorizedEntityId(EntityNames.Module, moduleId))
             {
-                _moduleNameRepository.DeleteModuleName(id);
+                await _moduleNameService.DeleteModuleNameAsync(id, moduleId);
                 _logger.Log(LogLevel.Information, this, LogFunction.Delete, "ModuleName Deleted {ModuleNameId}", id);
             }
             else
