@@ -66,10 +66,12 @@ templates/
     .template.config/
       template.json
     Client/Modules/ModuleName/
+    Client/Services/
     Shared/Models/
     Shared/Interfaces/
     Server/Controllers/
     Server/Managers/
+    Server/Migrations/
     Server/Repository/
     Server/Registration/
 MarkDav.Oqtane.Module.Template.csproj
