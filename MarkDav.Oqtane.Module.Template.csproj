@@ -13,5 +13,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include="templates/**/*" Exclude="templates/**/obj/**;templates/**/bin/**" />
+    <Compile Remove="templates/**/*" />
+    <EmbeddedResource Remove="templates/**/*" />
   </ItemGroup>
 </Project>
