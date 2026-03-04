@@ -11,12 +11,21 @@
     "type": "item"
   },
   "symbols": {
-    "namespace": {
+    "namespaceFromMsBuild": {
+      "type": "bind",
+      "binding": "MsBuild:RootNamespace"
+    },
+    "namespaceParam": {
       "type": "parameter",
       "datatype": "string",
-      "replaces": "RootNamespace",
       "defaultValue": "MyCompany.MyApp",
       "description": "Root namespace for the module (e.g. MarkDav.WeatherArbitrage)"
+    },
+    "namespace": {
+      "type": "coalesce",
+      "sourceVariableName": "namespaceFromMsBuild",
+      "defaultVariableName": "namespaceParam",
+      "replaces": "RootNamespace"
     }
   }
 }
