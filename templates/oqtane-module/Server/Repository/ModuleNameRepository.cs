@@ -67,6 +67,10 @@ namespace RootNamespace.Repository
         {
             using var db = _factory.CreateDbContext();
             var moduleName = db.ModuleName.Find(moduleNameId);
+            if (moduleName == null)
+            {
+                return;
+            }
             db.ModuleName.Remove(moduleName);
             db.SaveChanges();
         }
