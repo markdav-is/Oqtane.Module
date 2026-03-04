@@ -143,6 +143,7 @@ if ($rawModuleHits.Count -eq 0) {
 
 # ============================================================
 Write-Host "`n=== Step 7: dotnet build ===" -ForegroundColor Cyan
+$buildExit = -1
 Push-Location $OqtaneSolutionDir
 try {
     dotnet build
