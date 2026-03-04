@@ -101,6 +101,7 @@ $expectedFiles = @(
     "Server/Repository/${moduleName}Context.cs"
     "Server/Registration/${moduleName}Registration.cs"
     "Server/Migrations/${moduleName}ContextModelSnapshot.cs"
+    "Server/Migrations/20240101000000_${moduleName}InitialCreate.cs"
 )
 
 $pass = 0
