@@ -38,10 +38,12 @@ dotnet new oqtane-module -n MyModule --namespace MyCompany.MyModule
 Client/
   Modules/
     MyModule/
-      Index.razor
-      Edit.razor
-      Add.razor
-      Detail.razor
+      Index.razor         # List view
+      Edit.razor          # Add + edit view (shared, driven by PageState.Action)
+      Settings.razor      # Module settings panel
+      ModuleInfo.cs       # IModule implementation for Oqtane module discovery
+  Services/
+    MyModuleService.cs    # Client HTTP service (ServiceBase / ITransientService)
 Shared/
   Models/
     MyModule.cs
@@ -51,9 +53,13 @@ Server/
   Controllers/
     MyModuleController.cs
   Managers/
-    MyModuleManager.cs
+    MyModuleManager.cs    # Inherits MigratableModuleBase; runs EF migrations on install
   Repository/
+    MyModuleContext.cs    # DbContext (DBContextBase + IMultiDatabase)
     MyModuleRepository.cs
+  Migrations/
+    20240101000000_MyModuleInitialCreate.cs
+    MyModuleContextModelSnapshot.cs
   Registration/
     MyModuleRegistration.cs
 ```
