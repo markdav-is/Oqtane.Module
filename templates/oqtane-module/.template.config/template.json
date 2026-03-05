@@ -15,16 +15,16 @@
       "type": "bind",
       "binding": "MsBuild:RootNamespace"
     },
-    "namespaceParam": {
+    "namespace": {
       "type": "parameter",
       "datatype": "string",
       "defaultValue": "MyCompany.MyApp",
       "description": "Root namespace for the module (e.g. MarkDav.WeatherArbitrage)"
     },
-    "namespace": {
+    "resolvedNamespace": {
       "type": "coalesce",
       "sourceVariableName": "namespaceFromMsBuild",
-      "defaultVariableName": "namespaceParam",
+      "defaultVariableName": "namespace",
       "replaces": "RootNamespace"
     }
   }
