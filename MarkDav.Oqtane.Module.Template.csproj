@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <PackageId>MarkDav.Oqtane.Module.Template</PackageId>
-    <PackageVersion>1.0.0</PackageVersion>
+    <PackageVersion>1.0.2</PackageVersion>
     <Title>Oqtane Module Item Template</Title>
     <Authors>MarkDav</Authors>
     <PackageType>Template</PackageType>
